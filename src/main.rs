@@ -28,7 +28,7 @@ fn main() {
 }
 
 
-
+// reads and displays the given files contents returns an error
 fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.file_path)?;
 
@@ -38,14 +38,16 @@ fn run(config: Config) -> Result<(), Box<dyn Error>> {
 }
 
 
-
+// Config struct to hold the query content collected from args
 struct Config {
     query: String,
     file_path: String
 }
 
 
+// Config methods
 impl Config {
+    // constructor which will return an error if there are less than 3 args
     fn build(args: &[String]) -> Result<Config, &'static str> { 
         if args.len() < 3 {
             return Err("not enough arguments");
