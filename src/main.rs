@@ -1,7 +1,8 @@
 use std::env; // allows us to access the args iterator
 use std::process; // allows us to manipulate the running process 
 
-use minigrep::Config;
+use minigrep::Config; // allows access to the minigrep crates Config struct
+                      // - defined in lib.rs
 
 fn main() {
     // store arguments in args - those given when 'cargo run' is called
