@@ -31,14 +31,24 @@ pub struct Config {
 
 // Config methods
 impl Config {
-    // constructor which will return an error if there are less than 3 args
-    pub fn build(args: &[String]) -> Result<Config, &'static str> { 
-        if args.len() < 3 {
-            return Err("not enough arguments");
-        }
+    // constructor takes any type that implements the Iterator trait and returns
+    // String values;
+    pub fn build(
+        mut args: impl Iterator<Item = String>,
+    ) -> Result<Config, &'static str> { 
+        args.next(); // skip the name of the program
+        
+        // assign the second value to query or return Err()
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a query string"),
+        };
 
-        let query = args[1].clone(); 
-        let file_path = args[2].clone();
+        // assign the third value to file_path or return Err()
+        let file_path = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Didn't get a file path"),
+        };
         
         let ignore_case = env::var("IGNORE_CASE").is_ok();
 
@@ -52,32 +62,30 @@ impl Config {
 
 
 
+// Iterate through lines in contents and filter for lines that contain the query
+// string; use collect() to create a new Vec with the results 
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut vec = vec![];
-    for line in contents.lines() {
-        if line.contains(query) {
-            vec.push(line);
-        }
-    }
-    vec
+    contents  // the given string slice
+        .lines() // create an Iterator for the lines in contents
+        .filter(|line| line.contains(query)) // filter lines with closure
+        .collect()  // store filtered results into new Vec and return it
 }
 
 
 
-
+// Iterate through lines in contents and filter for lines that contain the query
+// string (case insensitive); use collect() to create a new Vec with the results
 pub fn search_case_insensitive<'a>(
     query: &str,
     contents: &'a str
 ) -> Vec<&'a str> {
+    // set query to lowercase
     let query = query.to_lowercase();
-    let mut vec = vec![];
-
-    for line in contents.lines() {
-        if line.to_lowercase().contains(&query) {
-            vec.push(line);
-        }
-    }
-    vec
+  
+    contents  // the given string slice
+        .lines() // create an Iterator for the lines in contents
+        .filter(|line| line.to_lowercase().contains(&query)) // filter lines
+        .collect() // store filtered results into new Vec and return it
 }
 
 

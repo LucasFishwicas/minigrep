@@ -5,12 +5,9 @@ use minigrep::Config; // allows access to the minigrep crates Config struct
                       // - defined in lib.rs
 
 fn main() {
-    // store arguments in args - those given when 'cargo run' is called
-    let args: Vec<String> = env::args().collect();
-    //dbg!(args);
-    
-    // construct a Config instance or display an error message and the program
-    let config = Config::build(&args).unwrap_or_else(|err| {
+    // construct a Config instance or display an error message and end the
+    // program; takes ownership of the env::args() iterator
+    let config = Config::build(env::args()).unwrap_or_else(|err| {
         eprintln!("Problem parsing arguments: {}",err);
         process::exit(1);
     });
